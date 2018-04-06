@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Digishui.NET</id>
+    <version>$version$</version>
+    <title>Digishui.NET</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/Digishui/Digishui.NET/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Digishui/Digishui.NET</projectUrl>
+    <iconUrl>http://www.digishui.com/img/Digishui-Logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Kitchen sink of extensions and utility classes for .NET.</description>
+    <releaseNotes>Added support for STFP stream upload using SSH.NET</releaseNotes>
+    <copyright>Copyright © 2011-2018</copyright>
+    <tags>Digishui</tags>
+  </metadata>
+</package>

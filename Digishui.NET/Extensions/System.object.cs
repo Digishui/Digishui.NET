@@ -1,4 +1,7 @@
-﻿//=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+﻿using System;
+using System.Globalization;
+
+//=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 namespace Digishui.Extensions
 {
   //===========================================================================================================================
@@ -28,6 +31,79 @@ namespace Digishui.Extensions
       if (Value == null) return NullString;
 
       return Value.ToString();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Determines if the supplied object represents a datetime.
+    /// </summary>
+    /// <param name="Value">The value to inspect.</param>
+    /// <returns></returns>
+    public static bool IsDateTime(this object Value)
+    {
+      if (Value != null)
+      {
+        if (Value is DateTime)
+        {
+          return true;
+        }
+        else if (Value is string)
+        {
+          string stringValue = (string)Value;
+          DateTime dateTime;
+
+          if ((stringValue.Trim().Length == 8) && (stringValue.IsNumeric() == true))
+          {
+            return DateTime.TryParseExact(stringValue, "yyyyMMdd", null, DateTimeStyles.None, out dateTime);
+          }
+          else
+          {
+            return DateTime.TryParse(stringValue, out dateTime);
+          }
+        }
+      }
+
+      return false;
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Extension method that determines if the supplied object represents a number.
+    /// </summary>
+    /// <param name="Value">String value to evaluate.</param>
+    /// <returns>Boolean value indicating whether the supplied string is numeric.</returns>
+    public static bool IsNumeric(this object Value)
+    {
+      if (Value == null) { return false; }
+
+      if (Value is byte) { return true; }
+      if (Value is sbyte) { return true; }
+      if (Value is short) { return true; }
+      if (Value is ushort) { return true; }
+      if (Value is int) { return true; }
+      if (Value is uint) { return true; }
+      if (Value is long) { return true; }
+      if (Value is ulong) { return true; }
+      if (Value is float) { return true; }
+      if (Value is double) { return true; }
+      if (Value is decimal) { return true; }
+
+      if (Value is string)
+      {
+        string MyString = Value.ToString();
+
+        if (MyString.IsEmpty() == true) return false;
+
+        MyString = MyString.Replace(" ", "");
+        MyString = MyString.Replace(",", "");
+        MyString = MyString.Replace("$", "");
+
+        decimal MyDecimal;
+
+        return decimal.TryParse(MyString, out MyDecimal);
+      }
+
+      return false;
     }
   }
 }

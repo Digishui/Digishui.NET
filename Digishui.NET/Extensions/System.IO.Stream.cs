@@ -63,31 +63,39 @@ namespace Digishui.Extensions
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
-    ///   Extension method that returns a string representation of the supplied stream using the system default text encoding.
+    ///   Extension method that returns a string representation of the supplied stream using the supplied or system default 
+    ///   text encoding.
     /// </summary>
     /// <param name="value">Stream for which a string representation will be returned.</param>
-    /// <returns>String representation of the supplied stream using the system default text encoding.</returns>
-    public static string GetString(this Stream value)
+    /// <param name="encoding">Text encoding for supplied stream.</param>
+    /// <returns>String representation of the supplied stream using the supplied or system default text encoding.</returns>
+    public static string GetString(this Stream value, Encoding encoding = null)
     {
+      if (encoding == null) { encoding = Encoding.Default; }
+
       using (MemoryStream MyMemoryStream = new MemoryStream())
       {
         value.CopyTo(MyMemoryStream, true);
-        return Encoding.Default.GetString(MyMemoryStream.ToArray());
+        return encoding.GetString(MyMemoryStream.ToArray());
       }
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
-    ///   Extension method that returns a string representation of the supplied stream using the system default text encoding.
+    ///   Extension method that returns a string representation of the supplied stream using the supplied or system default 
+    ///   text encoding.
     /// </summary>
     /// <param name="value">Stream for which a string representation will be returned.</param>
-    /// <returns>String representation of the supplied stream using the system default text encoding.</returns>
-    public static async Task<string> GetStringAsync(this Stream value)
+    /// <param name="encoding">Text encoding for supplied stream.</param>
+    /// <returns>String representation of the supplied stream using the supplied or system default text encoding.</returns>
+    public static async Task<string> GetStringAsync(this Stream value, Encoding encoding = null)
     {
+      if (encoding == null) { encoding = Encoding.Default; }
+
       using (MemoryStream MyMemoryStream = new MemoryStream())
       {
         await value.CopyToAsync(MyMemoryStream, true);
-        return Encoding.Default.GetString(MyMemoryStream.ToArray());
+        return encoding.GetString(MyMemoryStream.ToArray());
       }
     }
   }

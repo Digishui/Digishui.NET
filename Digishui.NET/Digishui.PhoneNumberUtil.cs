@@ -4,7 +4,7 @@
 namespace Digishui
 {
   //===========================================================================================================================
-  public class PhoneNumber
+  public class PhoneNumberUtil
   {
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
@@ -14,11 +14,11 @@ namespace Digishui
     /// </summary>
     /// <param name="PhoneNumber">Phone number to format for display purposes.</param>
     /// <returns>Phone number formatted for display purposes, or null if the phone number is invalid.</returns>
-    public static string PhoneNumberDisplayFormat(string PhoneNumber)
+    public static string DisplayFormat(string PhoneNumber)
     {
       if (PhoneNumber == null) return null;
 
-      PhoneNumberUtil MyPhoneNumberUtil = PhoneNumberUtil.GetInstance();
+      PhoneNumbers.PhoneNumberUtil MyPhoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
 
       PhoneNumber = PhoneNumber.Trim();
 
@@ -42,11 +42,11 @@ namespace Digishui
     /// </summary>
     /// <param name="PhoneNumber">Phone number to format for storage purposes.</param>
     /// <returns>Phone number formatted for storage purposes, or null if the phone number is invalid.</returns>
-    public static string PhoneNumberStorageFormat(string PhoneNumber)
+    public static string StorageFormat(string PhoneNumber)
     {
       if (PhoneNumber == null) return null;
 
-      PhoneNumberUtil MyPhoneNumberUtil = PhoneNumberUtil.GetInstance();
+      PhoneNumbers.PhoneNumberUtil MyPhoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
 
       PhoneNumber = PhoneNumber.Trim();
 

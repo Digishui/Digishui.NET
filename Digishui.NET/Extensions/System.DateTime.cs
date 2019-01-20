@@ -68,6 +68,28 @@ namespace Digishui.Extensions
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Converts the supplied UTC DateTime value to a Mountain Standard DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime ToMountainStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeFromUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Converts the supplied Central Standard DateTime value to a UTC DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime FromMountainStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeToUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public static bool IsHoliday(this DateTime dt)
     {
       if (dt.DayOfYear == 1) return true; //New Year's Day

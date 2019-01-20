@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -435,6 +437,32 @@ namespace Digishui.Extensions
       string Mask = new String(MaskCharacter, Value.Trim().Length - KeepFirst - KeepLast);
 
       return Value.Left(KeepFirst) + Mask + Value.Right(KeepLast);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Determines if the string is a publicly switched telephone number.
+    /// </summary>
+    /// <param name="value">String to evaluate.</param>
+    /// <returns>Boolean indicating if the evaluated string is a publicly switched telephone number.</returns>
+    public static bool IsPstn(this string value)
+    {
+      if (value.IsEmpty() == true) { return false; }
+
+      return (PstnUtil.StorageFormat(value) != null);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Determines if the string is a time zone.
+    /// </summary>
+    /// <param name="value">String to evaluate.</param>
+    /// <returns>Boolean indicating if the evaluated string is a time zone.</returns>
+    public static bool IsTimeZone(this string value)
+    {
+      List<string> timeZoneList = TimeZoneInfo.GetSystemTimeZones().Select(s => s.DisplayName).ToList();
+
+      return timeZoneList.Contains(value);
     }
   }
 }

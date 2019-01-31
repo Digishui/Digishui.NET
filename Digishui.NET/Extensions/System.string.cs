@@ -460,7 +460,7 @@ namespace Digishui.Extensions
     /// <returns>Boolean indicating if the evaluated string is a time zone.</returns>
     public static bool IsTimeZone(this string value)
     {
-      List<string> timeZoneList = TimeZoneInfo.GetSystemTimeZones().Select(s => s.DisplayName).ToList();
+      List<string> timeZoneList = TimeZoneInfo.GetSystemTimeZones().Select(s => s.Id).ToList();
 
       return timeZoneList.Contains(value);
     }

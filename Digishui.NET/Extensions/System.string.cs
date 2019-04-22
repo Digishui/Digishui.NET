@@ -334,7 +334,7 @@ namespace Digishui.Extensions
     /// <returns>DateTime that the string represents.</returns>
     public static DateTime ToDateTime(this string Value)
     {
-      if (Value.IsDateTime() == false) throw new ArgumentException("The string cannot be converted to a DateTime because it does not represent a numeric value.");
+      if (Value.IsDateTime() == false) throw new ArgumentException("The string cannot be converted to a DateTime because it does not represent a DateTime value.");
 
       if ((Value.Trim().Length == 8) && (Value.IsNumeric() == true))
       {
@@ -354,7 +354,7 @@ namespace Digishui.Extensions
     /// <returns>DateTime that the string represents or null.</returns>
     public static DateTime? ToDateTimeOrNull(this string Value)
     {
-      if (Value.IsEmpty() == true) return null;
+      if (Value.IsDateTime() == false) { return null; }
 
       return ToDateTime(Value);
     }

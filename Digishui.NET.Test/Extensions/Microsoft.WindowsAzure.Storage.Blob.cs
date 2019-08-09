@@ -11,7 +11,7 @@ using Microsoft.WindowsAzure.Storage.RetryPolicies;
 namespace Digishui.NET.Test
 {
   [TestClass]
-  public class ExtensionTests
+  public partial class ExtensionTests
   {
     [TestMethod]
     public async Task Microsoft_WindowsAzure_Storage_Blob_CloudBlobContainer_ListAsync()

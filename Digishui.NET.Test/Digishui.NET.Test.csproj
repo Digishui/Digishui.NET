@@ -42,6 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\System.string.cs" />
     <Compile Include="Extensions\Microsoft.WindowsAzure.Storage.Blob.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

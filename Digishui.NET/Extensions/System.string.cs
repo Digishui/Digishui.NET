@@ -169,21 +169,36 @@ namespace Digishui.Extensions
     /// <summary>
     ///   Extension method that determines if the supplied string value is a valid representation of a DateTime.
     /// </summary>
-    /// <param name="Value">String value to evaluate.</param>
+    /// <param name="value">String value to evaluate.</param>
     /// <returns>Boolean value indicating whether the supplied string is a valid representation of a DateTime.</returns>
-    public static bool IsDateTime(this string Value)
+    public static bool IsDateTime(this string value)
     {
-      if (Value.IsEmpty() == true) return false;
+      if (value.IsEmpty() == true) return false;
 
       DateTime MyDateTime;
 
-      if ((Value.Trim().Length == 8) && (Value.IsNumeric() == true))
+      value = value.Trim().ToLower();
+      int valueLength = value.Length;
+      bool valueIsInt = value.IsInt();
+
+      if (((valueIsInt == true) && (value.ToInt() >= -657435) && (value.ToInt() <= 99999)) || ((value.IsNumeric() == true) && (value.ToDecimal() >= -657435.0m) && (value.ToDecimal() <= 2958465.99999999m)))
       {
-        return DateTime.TryParseExact(Value, "yyyyMMdd", null, DateTimeStyles.None, out MyDateTime);
+        //OLE Automation Dates.
+        return true;
+      }
+      else if ((valueIsInt == true) && (valueLength == 8))
+      {
+        //yyyyMMdd.
+        return DateTime.TryParseExact(value, "yyyyMMdd", null, DateTimeStyles.None, out MyDateTime);
+      }
+      else if ((valueLength >= 23) && ((value.EndsWith(" am") == true) || (value.EndsWith(" pm") == true)))
+      {
+        //Format encountered in real world.
+        return DateTime.TryParseExact(value, "dd-MMM-yy h.mm.sss.fff tt", null, DateTimeStyles.None, out MyDateTime);
       }
       else
       {
-        return DateTime.TryParse(Value, out MyDateTime);
+        return DateTime.TryParse(value, out MyDateTime);
       }
     }
 
@@ -330,19 +345,34 @@ namespace Digishui.Extensions
     /// <summary>
     ///   Extension method that converts the supplied string to a datetime.
     /// </summary>
-    /// <param name="Value">String value to convert.</param>
+    /// <param name="value">String value to convert.</param>
     /// <returns>DateTime that the string represents.</returns>
-    public static DateTime ToDateTime(this string Value)
+    public static DateTime ToDateTime(this string value)
     {
-      if (Value.IsDateTime() == false) throw new ArgumentException("The string cannot be converted to a DateTime because it does not represent a DateTime value.");
+      if (value.IsDateTime() == false) throw new ArgumentException("The string cannot be converted to a DateTime because it does not represent a DateTime value.");
 
-      if ((Value.Trim().Length == 8) && (Value.IsNumeric() == true))
+      value = value.Trim().ToLower();
+      int valueLength = value.Length;
+      bool valueIsInt = value.IsInt();
+
+      if (((valueIsInt == true) && (value.ToInt() >= -657435) && (value.ToInt() <= 99999)) || ((value.IsNumeric() == true) && (value.ToDecimal() >= -657435.0m) && (value.ToDecimal() <= 2958465.99999999m)))
       {
-        return DateTime.ParseExact(Value, "yyyyMMdd", null, DateTimeStyles.None);
+        //OLE Automation Dates.
+        return DateTime.FromOADate(Convert.ToDouble(value));
+      }
+      else if ((valueIsInt == true) && (valueLength == 8))
+      {
+        //yyyyMMdd.
+        return DateTime.ParseExact(value, "yyyyMMdd", null, DateTimeStyles.None);
+      }
+      else if ((valueLength >= 23) && ((value.EndsWith(" am") == true) || (value.EndsWith(" pm") == true)))
+      {
+        //Format encountered in real world.
+        return DateTime.ParseExact(value, "dd-MMM-yy h.mm.sss.fff tt", null, DateTimeStyles.None);
       }
       else
       {
-        return DateTime.Parse(Value);
+        return DateTime.Parse(value);
       }
     }
 

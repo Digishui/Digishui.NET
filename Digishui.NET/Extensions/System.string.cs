@@ -171,34 +171,32 @@ namespace Digishui.Extensions
     /// </summary>
     /// <param name="value">String value to evaluate.</param>
     /// <returns>Boolean value indicating whether the supplied string is a valid representation of a DateTime.</returns>
-    public static bool IsDateTime(this string value)
+    public static bool IsDateTime(this string value, bool )
     {
-      if (value.IsEmpty() == true) return false;
-
-      DateTime MyDateTime;
+      if (value.IsEmpty() == true) { return false; }
 
       value = value.Trim().ToLower();
-      int valueLength = value.Length;
-      bool valueIsInt = value.IsInt();
 
-      if (((valueIsInt == true) && (value.ToInt() >= -657435) && (value.ToInt() <= 99999)) || ((value.IsNumeric() == true) && (value.ToDecimal() >= -657435.0m) && (value.ToDecimal() <= 2958465.99999999m)))
+      if ((value.IsInt() == true) && (value.ToInt() >= -657435) && (value.ToInt() <= 99999)) { value += ".0"; }
+
+      if ((value.IsNumeric() == true) && (value.IsInt() == false) && (value.ToDecimal() >= -657435.0m) && (value.ToDecimal() <= 2958465.99999999m))
       {
         //OLE Automation Dates.
         return true;
       }
-      else if ((valueIsInt == true) && (valueLength == 8))
+      else if ((value.IsNumeric() == true) && (value.IsInt() == true) && (value.Length == 8))
       {
         //yyyyMMdd.
-        return DateTime.TryParseExact(value, "yyyyMMdd", null, DateTimeStyles.None, out MyDateTime);
+        return DateTime.TryParseExact(value, "yyyyMMdd", null, DateTimeStyles.None, out DateTime dateTime);
       }
-      else if ((valueLength >= 23) && ((value.EndsWith(" am") == true) || (value.EndsWith(" pm") == true)))
+      else if ((value.Length >= 23) && ((value.EndsWith(" am") == true) || (value.EndsWith(" pm") == true)))
       {
         //Format encountered in real world.
-        return DateTime.TryParseExact(value, "dd-MMM-yy h.mm.sss.fff tt", null, DateTimeStyles.None, out MyDateTime);
+        return DateTime.TryParseExact(value, "dd-MMM-yy h.mm.sss.fff tt", null, DateTimeStyles.None, out DateTime dateTime);
       }
       else
       {
-        return DateTime.TryParse(value, out MyDateTime);
+        return DateTime.TryParse(value, out DateTime dateTime);
       }
     }
 

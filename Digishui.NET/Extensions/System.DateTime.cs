@@ -47,6 +47,28 @@ namespace Digishui.Extensions
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
+    ///   Converts the supplied UTC DateTime value to a Eastern Standard DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime ToEasternStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeFromUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Converts the supplied Eastern Standard DateTime value to a UTC DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime FromEasternStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeToUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
     ///   Converts the supplied UTC DateTime value to a Central Standard DateTime.
     /// </summary>
     /// <param name="Value"></param>
@@ -80,13 +102,35 @@ namespace Digishui.Extensions
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
-    ///   Converts the supplied Central Standard DateTime value to a UTC DateTime.
+    ///   Converts the supplied Mountain Standard DateTime value to a UTC DateTime.
     /// </summary>
     /// <param name="Value"></param>
     /// <returns></returns>
     public static DateTime FromMountainStandard(this DateTime Value)
     {
       return TimeZoneInfo.ConvertTimeToUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Converts the supplied UTC DateTime value to a Pacific Standard DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime ToPacificStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeFromUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Converts the supplied Pacific Standard DateTime value to a UTC DateTime.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    public static DateTime FromPacificStandard(this DateTime Value)
+    {
+      return TimeZoneInfo.ConvertTimeToUtc(Value, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
     }
 
     //-------------------------------------------------------------------------------------------------------------------------

@@ -5,15 +5,15 @@
   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   <Authors>Digishui LLC</Authors>
   <Description>Kitchen sink of extensions and utility classes for .NET.</Description>
-  <Copyright>Copyright © 2011-2019</Copyright>
+  <Copyright>Copyright © 2011-2020</Copyright>
   <PackageProjectUrl>https://github.com/Digishui/Digishui.NET</PackageProjectUrl>
   <PackageIconUrl>http://www.digishui.com/img/Digishui-Logo.png</PackageIconUrl>
   <PackageTags>Digishui</PackageTags>
-  <PackageReleaseNotes>1. Added DigishuiController for ASP.Net MVC. Exposes an AjaxErrorsResult ActionResult, which can be used to return JSON containing a dictionary of server-side error codes and explanations along with an HTTP 400 response to client. 2. Update to sendgrid dependency. 3. Removal of System.Net.Http nuget package (it comes with .net framework). 4. Added DateTime conversion extensions for Eastern Standard and Pacific Standard.</PackageReleaseNotes>
+  <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.32.*</AssemblyVersion>
-  <FileVersion>1.32</FileVersion>
-  <Version>1.32.4</Version>
+  <AssemblyVersion>1.33.*</AssemblyVersion>
+  <FileVersion>1.33</FileVersion>
+  <Version>1.33</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>

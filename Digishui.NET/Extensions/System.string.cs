@@ -171,7 +171,7 @@ namespace Digishui.Extensions
     /// </summary>
     /// <param name="value">String value to evaluate.</param>
     /// <returns>Boolean value indicating whether the supplied string is a valid representation of a DateTime.</returns>
-    public static bool IsDateTime(this string value, bool )
+    public static bool IsDateTime(this string value)
     {
       if (value.IsEmpty() == true) { return false; }
 

@@ -10,7 +10,7 @@
   <PackageIconUrl>http://www.digishui.com/img/Digishui-Logo.png</PackageIconUrl>
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes>1. Added DigishuiController for ASP.Net MVC. Exposes an AjaxErrorsResult ActionResult, which can be used to return JSON containing a dictionary of server-side error codes and explanations along with an HTTP 400 response to client. 2. Update to sendgrid dependency. 3. Removal of System.Net.Http nuget package (it comes with .net framework). 4. Added DateTime conversion extensions for Eastern Standard and Pacific Standard.</PackageReleaseNotes>
-  <PackageOutputPath>N:\</PackageOutputPath>
+  <PackageOutputPath>C:\Nuget</PackageOutputPath>
   <AssemblyVersion>1.32.*</AssemblyVersion>
   <FileVersion>1.32</FileVersion>
   <Version>1.32.4</Version>
@@ -24,13 +24,13 @@
   <None Remove="Properties\AssemblyInfo.cs.old" />
 </ItemGroup>
 <ItemGroup>
-  <PackageReference Include="EntityFramework" Version="6.3.0" />
-  <PackageReference Include="libphonenumber-csharp" Version="8.10.20" />
+  <PackageReference Include="EntityFramework" Version="6.4.4" />
+  <PackageReference Include="libphonenumber-csharp" Version="8.12.6" />
   <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
-  <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-  <PackageReference Include="Sendgrid" Version="9.12.0" />
+  <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  <PackageReference Include="Sendgrid" Version="9.18.0" />
   <PackageReference Include="SSH.NET" Version="2016.1.0" />
-  <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+  <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 </ItemGroup>
 <ItemGroup>

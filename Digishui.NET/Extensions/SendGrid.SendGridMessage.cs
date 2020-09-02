@@ -1,6 +1,7 @@
 ﻿using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -56,6 +57,54 @@ namespace Digishui.Extensions
       if (supportBCC == true)
       {
         sendGridMessage.AddBcc(Configuration.SendGridDefaultBCC);
+      }
+
+      //Sending a message through the SendGrid API fails if you have the same email address listed as a recipient more than
+      //once across the To, CC, and BCC fields. The following code deduplicates addresses, with the most consequential instance
+      //of the address being preserved.
+
+      List<string> recipients = new List<string>();
+
+      for (int i = (sendGridMessage.Personalizations[0]?.Tos?.Count ?? 0) - 1; i >= 0; i--)
+      {
+        EmailAddress emailAddress = sendGridMessage.Personalizations[0].Tos[i];
+
+        if (recipients.Contains(emailAddress.Email.Trim().ToLower()) == false)
+        {
+          recipients.Add(emailAddress.Email.Trim().ToLower());
+        }
+        else
+        {
+          sendGridMessage.Personalizations[0].Tos.RemoveAt(i);
+        }
+      }
+
+      for (int i = (sendGridMessage.Personalizations[0]?.Ccs?.Count ?? 0) - 1; i >= 0; i--)
+      {
+        EmailAddress emailAddress = sendGridMessage.Personalizations[0].Ccs[i];
+
+        if (recipients.Contains(emailAddress.Email.Trim().ToLower()) == false)
+        {
+          recipients.Add(emailAddress.Email.Trim().ToLower());
+        }
+        else
+        {
+          sendGridMessage.Personalizations[0].Ccs.RemoveAt(i);
+        }
+      }
+
+      for (int i = (sendGridMessage.Personalizations[0]?.Bccs?.Count ?? 0) - 1; i >= 0; i--)
+      {
+        EmailAddress emailAddress = sendGridMessage.Personalizations[0].Bccs[i];
+
+        if (recipients.Contains(emailAddress.Email.Trim().ToLower()) == false)
+        {
+          recipients.Add(emailAddress.Email.Trim().ToLower());
+        }
+        else
+        {
+          sendGridMessage.Personalizations[0].Bccs.RemoveAt(i);
+        }
       }
     }
 

@@ -190,8 +190,10 @@ namespace Digishui.Extensions
       {
         Response MyResponse = await SendGridClient.SendEmailAsync(TheSendGridMessage);
       }
-      catch
+      catch (Exception exception)
       {
+        System.Diagnostics.Debug.Print(exception.Message);
+
         return false;
       }
 

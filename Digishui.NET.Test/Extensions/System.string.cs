@@ -42,5 +42,18 @@ namespace Digishui.NET.Test
         Assert.Fail("System.string.ToDateTime extension dependency on System.string.IsDateTime should return True for value '43615'");
       }
     }
+
+    [TestMethod]
+    public void System_string_GetNumbers()
+    {
+      if ("1a2b3c! ".GetNumbers() != "123") { Assert.Fail("System.string.GetNumbers extension should return '123' for value '1a2b3c! '"); }
+    }
+
+    [TestMethod]
+    public void System_string_IsAbaRoutingNumber()
+    {
+      if ("101000187".IsAbaRoutingNumber() == false) { Assert.Fail("System.string.IsAbaRoutingNumber extension should return True for value '101000187'"); }
+      if ("324179555".IsAbaRoutingNumber() == true) { Assert.Fail("System.string.IsAbaRoutingNumber extension should return False for value '324179555'"); }
+    }
   }
 }

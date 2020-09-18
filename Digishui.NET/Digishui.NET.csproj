@@ -11,9 +11,9 @@
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.35.*</AssemblyVersion>
-  <FileVersion>1.35</FileVersion>
-  <Version>1.35</Version>
+  <AssemblyVersion>1.36.*</AssemblyVersion>
+  <FileVersion>1.36</FileVersion>
+  <Version>1.36</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>

@@ -492,5 +492,48 @@ namespace Digishui.Extensions
 
       return timeZoneList.Contains(value);
     }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Returns only the numbers in the supplied string.
+    /// </summary>
+    /// <remarks>
+    ///   https://stackoverflow.com/questions/3977497/stripping-out-non-numeric-characters-in-string
+    /// </remarks>
+    /// <param name="value">String to evaluate.</param>
+    /// <returns>String containing only the numbers that were in the supplied string.</returns>
+    public static string GetNumbers(this string value)
+    {
+      return new string(value.Where(w => char.IsDigit(w)).ToArray());
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Determines if the string is an ABA Routing Number
+    /// </summary>
+    /// <remarks>
+    ///   http://www.brainjar.com/js/validation/
+    /// </remarks>
+    /// <param name="value">String to evaluate.</param>
+    /// <returns>Boolean indicating if the evaluated string is an ABA Routing Number.</returns>
+    public static bool IsAbaRoutingNumber(this string value)
+    {
+      if (value == null) { return false; }
+      
+      value = value.GetNumbers();
+
+      if (value.Length != 9) { return false; }
+
+      int checksum = 0;
+
+      for (int index = 0; index < 9; index += 3)
+      {
+        checksum += (value.Substring(index, 1).ToInt() * 3)
+                 + (value.Substring(index + 1, 1).ToInt() * 7)
+                 + value.Substring(index + 2, 1).ToInt();
+      }
+
+      return ((checksum != 0) && ((checksum % 10) == 0));
+    }
   }
 }

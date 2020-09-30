@@ -47,16 +47,35 @@ namespace Digishui.Extensions
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    private static void Prepare(this SendGridMessage sendGridMessage, bool supportBCC = false)
+    /// <summary>
+    ///   Prepares SendGrid message for sending.
+    /// </summary>
+    /// <param name="sendGridMessage">The SendGrid message to prepare.</param>
+    /// <param name="addDefaultBcc">If true, adds the default bcc address from application configuration setting (Digishui.SendGridDefaultBCC)</param>
+    /// <param name="renderPlainTextOnlyAlsoAsPreformattedHtml">If true and message only has plain text content, adds html content equal to plain text content, wrapped in pre tags to preserve fixed-width font rendering in most mail clients.</param>
+    private static void Prepare(this SendGridMessage sendGridMessage, bool addDefaultBcc = false, bool renderPlainTextOnlyAlsoAsPreformattedHtml = true)
     {
       if (sendGridMessage.From == null)
       {
         sendGridMessage.From = new EmailAddress(Configuration.SendGridDefaultFromAddress, Configuration.SendGridDefaultFromName);
       }
 
-      if (supportBCC == true)
+      if (addDefaultBcc == true)
       {
         sendGridMessage.AddBcc(Configuration.SendGridDefaultBCC);
+      }
+
+      //If plain text content is supplied but html content is not supplied, set htmlcontent to same as plain text content
+      //wrapped in <pre> tags. This ensures fixed width font rendering across most mail clients, which is preferable since
+      //plain text content is composed with that assumption. Also, if only plain text content is supplied, disable click
+      //tracking and open tracking because these features mangle the plain text composition, and SendGrid doesn't apply
+      //the same mangling to the html composition when wrapped in <pre> tags.
+      if ((sendGridMessage.PlainTextContent != null) && (sendGridMessage.HtmlContent == null) && (renderPlainTextOnlyAlsoAsPreformattedHtml == true))
+      {
+        sendGridMessage.HtmlContent = $"<pre>{sendGridMessage.PlainTextContent}</pre>";
+
+        sendGridMessage.SetClickTracking(false, false);
+        sendGridMessage.SetOpenTracking(false, null);
       }
 
       //Sending a message through the SendGrid API fails if you have the same email address listed as a recipient more than
@@ -182,13 +201,20 @@ namespace Digishui.Extensions
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static async Task<bool> SendAsync(this SendGridMessage TheSendGridMessage, bool SupportBCC = false)
+    /// <summary>
+    ///   Sends SendGrid message asynchronously.
+    /// </summary>
+    /// <param name="sendGridMessage">The SendGrid message to send.</param>
+    /// <param name="addDefaultBcc">If true, adds the default bcc address from application configuration setting (Digishui.SendGridDefaultBCC)</param>
+    /// <param name="renderPlainTextOnlyAlsoAsPreformattedHtml">If true and message only has plain text content, adds html content equal to plain text content, wrapped in pre tags to preserve fixed-width font rendering in most mail clients.</param>
+    /// <returns></returns>
+    public static async Task<bool> SendAsync(this SendGridMessage sendGridMessage, bool addDefaultBcc = false, bool renderPlainTextOnlyAlsoAsPreformattedHtml = true)
     {
-      TheSendGridMessage.Prepare(SupportBCC);
+      sendGridMessage.Prepare(addDefaultBcc, renderPlainTextOnlyAlsoAsPreformattedHtml);
 
       try
       {
-        Response MyResponse = await SendGridClient.SendEmailAsync(TheSendGridMessage);
+        Response response = await SendGridClient.SendEmailAsync(sendGridMessage);
       }
       catch (Exception exception)
       {
@@ -201,13 +227,20 @@ namespace Digishui.Extensions
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static bool Send(this SendGridMessage TheSendGridMessage, bool SupportBCC = false)
+    /// <summary>
+    ///   Sends SendGrid message synchronously.
+    /// </summary>
+    /// <param name="sendGridMessage">The SendGrid message to send.</param>
+    /// <param name="addDefaultBcc">If true, adds the default bcc address from application configuration setting (Digishui.SendGridDefaultBCC)</param>
+    /// <param name="renderPlainTextOnlyAlsoAsPreformattedHtml">If true and message only has plain text content, adds html content equal to plain text content, wrapped in pre tags to preserve fixed-width font rendering in most mail clients.</param>
+    /// <returns></returns>
+    public static bool Send(this SendGridMessage sendGridMessage, bool addDefaultBcc = false, bool renderPlainTextOnlyAlsoAsPreformattedHtml = true)
     {
-      TheSendGridMessage.Prepare(SupportBCC);
+      sendGridMessage.Prepare(addDefaultBcc, renderPlainTextOnlyAlsoAsPreformattedHtml);
 
       try
       {
-        System.Diagnostics.Debug.Print(SendGridWebClient.UploadString("mail/send", TheSendGridMessage.Serialize()));
+        System.Diagnostics.Debug.Print(SendGridWebClient.UploadString("mail/send", sendGridMessage.Serialize()));
       }
       catch (Exception exception)
       {

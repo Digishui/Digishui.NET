@@ -406,6 +406,23 @@ namespace Digishui.Extensions
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
+    ///   Extension method that converts the supplied string to a decimal.
+    /// </summary>
+    /// <param name="Value">String value to convert.</param>
+    /// <returns>Decimal that the string represents.</returns>
+    public static decimal? ToDecimalOrNull(this string Value)
+    {
+      if (Value.IsNumeric() == false) { return null; }
+
+      Value = Value.Replace(" ", "");
+      Value = Value.Replace(",", "");
+      Value = Value.Replace("$", "");
+
+      return decimal.Parse(Value);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
     ///   Extension method that converts the supplied string to an integer.
     /// </summary>
     /// <param name="Value">String value to convert.</param>
@@ -423,6 +440,23 @@ namespace Digishui.Extensions
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
+    ///   Extension method that converts the supplied string to an integer.
+    /// </summary>
+    /// <param name="Value">String value to convert.</param>
+    /// <returns>Integer that the string represents.</returns>
+    public static int? ToIntOrNull(this string Value)
+    {
+      if (Value.IsInt() == false) { return null; }
+
+      Value = Value.Replace(" ", "");
+      Value = Value.Replace(",", "");
+      Value = Value.Replace("$", "");
+
+      return int.Parse(Value);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
     ///   Extension method that converts the supplied string to a Guid.
     /// </summary>
     /// <param name="Value">String value to convert.</param>
@@ -430,6 +464,19 @@ namespace Digishui.Extensions
     public static Guid ToGuid(this string Value)
     {
       if (Value.IsGuid() == false) throw new ArgumentException("The string cannot be converted to a Guid because it does not represent an Guid value.");
+
+      return Guid.Parse(Value);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    ///   Extension method that converts the supplied string to a Guid.
+    /// </summary>
+    /// <param name="Value">String value to convert.</param>
+    /// <returns>Guid that the string represents.</returns>
+    public static Guid? ToGuidOrNull(this string Value)
+    {
+      if (Value.IsGuid() == false) { return null; }
 
       return Guid.Parse(Value);
     }

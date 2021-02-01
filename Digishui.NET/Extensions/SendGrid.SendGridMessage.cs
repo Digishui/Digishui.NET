@@ -72,7 +72,7 @@ namespace Digishui.Extensions
       //the same mangling to the html composition when wrapped in <pre> tags.
       if ((sendGridMessage.PlainTextContent != null) && (sendGridMessage.HtmlContent == null) && (renderPlainTextOnlyAlsoAsPreformattedHtml == true))
       {
-        sendGridMessage.HtmlContent = $"<pre style=\"white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: break-word\">{sendGridMessage.PlainTextContent}</pre>";
+        sendGridMessage.HtmlContent = $"<pre style=\"white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: break-word\">{WebUtility.HtmlEncode(sendGridMessage.PlainTextContent)}</pre>";
 
         sendGridMessage.SetClickTracking(false, false);
         sendGridMessage.SetOpenTracking(false, null);
@@ -112,6 +112,8 @@ namespace Digishui.Extensions
         }
       }
 
+      if ((sendGridMessage.Personalizations[0]?.Ccs?.Count ?? 0) == 0) { sendGridMessage.Personalizations[0].Ccs = null; }
+
       for (int i = (sendGridMessage.Personalizations[0]?.Bccs?.Count ?? 0) - 1; i >= 0; i--)
       {
         EmailAddress emailAddress = sendGridMessage.Personalizations[0].Bccs[i];
@@ -125,78 +127,80 @@ namespace Digishui.Extensions
           sendGridMessage.Personalizations[0].Bccs.RemoveAt(i);
         }
       }
+
+      if ((sendGridMessage.Personalizations[0]?.Bccs?.Count ?? 0) == 0) { sendGridMessage.Personalizations[0].Bccs = null; }
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    private static void EmbedImages(this SendGridMessage TheSendGridMessage, string TemplatePath, string ImageExtension, string ImageMimeType)
+    private static void EmbedImages(this SendGridMessage sendGridMessage, string templatePath, string imageExtension, string imageMimeType)
     {
-      string[] ImageFiles = Directory.GetFiles(TemplatePath, $"*.{ImageExtension}");
+      string[] imageFiles = Directory.GetFiles(templatePath, $"*.{imageExtension}");
 
-      foreach (string ImageFile in ImageFiles)
+      foreach (string imageFile in imageFiles)
       {
-        if (Path.GetFileName(ImageFile).StartsWith(".") == false)
+        if (Path.GetFileName(imageFile).StartsWith(".") == false)
         {
-          if (TheSendGridMessage.HtmlContent.Contains(Path.GetFileName(ImageFile)) == true)
+          if (sendGridMessage.HtmlContent.Contains(Path.GetFileName(imageFile)) == true)
           {
-            byte[] FileBytes = File.ReadAllBytes(ImageFile);
-            string Base64FileContent = Convert.ToBase64String(FileBytes);
-            TheSendGridMessage.AddAttachment(Path.GetFileName(ImageFile), Base64FileContent, ImageMimeType, "inline", Path.GetFileName(ImageFile));
+            byte[] fileBytes = File.ReadAllBytes(imageFile);
+            string base64FileContent = Convert.ToBase64String(fileBytes);
+            sendGridMessage.AddAttachment(Path.GetFileName(imageFile), base64FileContent, imageMimeType, "inline", Path.GetFileName(imageFile));
           }
         }
       }
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static void LoadTemplate(this SendGridMessage TheSendGridMessage, string TemplateName)
+    public static void LoadTemplate(this SendGridMessage sendGridMessage, string templateName)
     {
-      string TemplatePath = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\EmailTemplates\\{TemplateName}";
+      string templatePath = $"{System.AppDomain.CurrentDomain.BaseDirectory}\\EmailTemplates\\{templateName}";
 
-      if (File.Exists(Path.Combine(TemplatePath, "body.html")) == true)
+      if (File.Exists(Path.Combine(templatePath, "body.html")) == true)
       {
-        TheSendGridMessage.HtmlContent = File.ReadAllText(Path.Combine(TemplatePath, "body.html"));
-        TheSendGridMessage.HtmlContent = TheSendGridMessage.HtmlContent.Replace("<img src=\"", "<img src=\"cid:");
+        sendGridMessage.HtmlContent = File.ReadAllText(Path.Combine(templatePath, "body.html"));
+        sendGridMessage.HtmlContent = sendGridMessage.HtmlContent.Replace("<img src=\"", "<img src=\"cid:");
 
-        TheSendGridMessage.EmbedImages(TemplatePath, "gif", "image/gif");
-        TheSendGridMessage.EmbedImages(TemplatePath, "jpg", "image/jpeg");
-        TheSendGridMessage.EmbedImages(TemplatePath, "png", "image/png");
+        sendGridMessage.EmbedImages(templatePath, "gif", "image/gif");
+        sendGridMessage.EmbedImages(templatePath, "jpg", "image/jpeg");
+        sendGridMessage.EmbedImages(templatePath, "png", "image/png");
       }
 
-      if (File.Exists(Path.Combine(TemplatePath, "body.txt")) == true)
+      if (File.Exists(Path.Combine(templatePath, "body.txt")) == true)
       {
-        TheSendGridMessage.PlainTextContent = File.ReadAllText(Path.Combine(TemplatePath, "body.txt")); ;
+        sendGridMessage.PlainTextContent = File.ReadAllText(Path.Combine(templatePath, "body.txt")); ;
       }
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static void AddAttachment(this SendGridMessage TheSendGridMessage, string Content, string Filename, string MimeType)
+    public static void AddAttachment(this SendGridMessage sendGridMessage, string content, string filename, string mimeType)
     {
-      string Base64FileContent = Convert.ToBase64String(Encoding.UTF8.GetBytes(Content));
+      string base64FileContent = Convert.ToBase64String(Encoding.UTF8.GetBytes(content));
 
-      TheSendGridMessage.AddAttachment(Path.GetFileName(Filename), Base64FileContent, MimeType);
+      sendGridMessage.AddAttachment(Path.GetFileName(filename), base64FileContent, mimeType);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static void AddAttachment(this SendGridMessage TheSendGridMessage, Stream ContentStream, string Filename, string MimeType)
+    public static void AddAttachment(this SendGridMessage sendGridMessage, Stream contentStream, string filename, string mimeType)
     {
-      byte[] FileBytes = new byte[ContentStream.Length];
-      ContentStream.Read(FileBytes, 0, FileBytes.Length);
+      byte[] fileBytes = new byte[contentStream.Length];
+      contentStream.Read(fileBytes, 0, fileBytes.Length);
 
-      string Base64FileContent = Convert.ToBase64String(FileBytes);
+      string base64FileContent = Convert.ToBase64String(fileBytes);
 
-      TheSendGridMessage.AddAttachment(Path.GetFileName(Filename), Base64FileContent, MimeType);
+      sendGridMessage.AddAttachment(Path.GetFileName(filename), base64FileContent, mimeType);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public static void SetTemplateVariable(this SendGridMessage TheSendGridMessage, string VariableName, string Value)
+    public static void SetTemplateVariable(this SendGridMessage sendGridMessage, string variableName, string value)
     {
-      if (TheSendGridMessage.HtmlContent != null)
+      if (sendGridMessage.HtmlContent != null)
       {
-        TheSendGridMessage.HtmlContent = TheSendGridMessage.HtmlContent.Replace($"{{[{VariableName}]}}", Value);
+        sendGridMessage.HtmlContent = sendGridMessage.HtmlContent.Replace($"{{[{variableName}]}}", value);
       }
 
-      if (TheSendGridMessage.PlainTextContent != null)
+      if (sendGridMessage.PlainTextContent != null)
       {
-        TheSendGridMessage.PlainTextContent = TheSendGridMessage.PlainTextContent.Replace($"{{[{VariableName}]}}", Value);
+        sendGridMessage.PlainTextContent = sendGridMessage.PlainTextContent.Replace($"{{[{variableName}]}}", value);
       }
     }
 

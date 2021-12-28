@@ -216,7 +216,7 @@ namespace Digishui.Extensions
 
       decimal MyDecimal;
 
-      return decimal.TryParse(Value, out MyDecimal);
+      return decimal.TryParse(Value, NumberStyles.Any, CultureInfo.InvariantCulture, out MyDecimal);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ namespace Digishui.Extensions
       Value = Value.Replace(",", "");
       Value = Value.Replace("$", "");
 
-      return decimal.Parse(Value);
+      return decimal.Parse(Value, NumberStyles.Any);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ namespace Digishui.Extensions
       Value = Value.Replace(",", "");
       Value = Value.Replace("$", "");
 
-      return decimal.Parse(Value);
+      return decimal.Parse(Value, NumberStyles.Any);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------

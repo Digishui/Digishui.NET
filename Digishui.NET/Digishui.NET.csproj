@@ -5,15 +5,15 @@
   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   <Authors>Digishui LLC</Authors>
   <Description>Kitchen sink of extensions and utility classes for .NET.</Description>
-  <Copyright>Copyright © 2011-2020</Copyright>
+  <Copyright>Copyright © 2011-2021</Copyright>
   <PackageProjectUrl>https://github.com/Digishui/Digishui.NET</PackageProjectUrl>
   <PackageIconUrl>http://www.digishui.com/img/Digishui-Logo.png</PackageIconUrl>
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.47.6.*</AssemblyVersion>
-  <FileVersion>1.47.6</FileVersion>
-  <Version>1.47.6</Version>
+  <AssemblyVersion>1.47.14.*</AssemblyVersion>
+  <FileVersion>1.47.14</FileVersion>
+  <Version>1.47.14</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>
@@ -25,12 +25,12 @@
 </ItemGroup>
 <ItemGroup>
   <PackageReference Include="EntityFramework" Version="6.4.4" />
-  <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
-  <PackageReference Include="libphonenumber-csharp" Version="8.12.15" />
+  <PackageReference Include="HtmlAgilityPack" Version="1.11.32" />
+  <PackageReference Include="libphonenumber-csharp" Version="8.12.21" />
   <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
-  <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   <PackageReference Include="Sendgrid" Version="9.22.0" />
-  <PackageReference Include="SSH.NET" Version="2020.0.0" />
+  <PackageReference Include="SSH.NET" Version="2020.0.1" />
   <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
   <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 </ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using Digishui.Extensions;
 using HtmlAgilityPack;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
@@ -27,14 +28,21 @@ namespace Digishui
     //-------------------------------------------------------------------------------------------------------------------------
     public async Task GetAsync(Uri uri)
     {
-      HttpWebResponse = await uri.GetAsync(CookieContainer, CurrentUri);
+      HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, CurrentUri);
       await ProcessResponse();
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
     public async Task PostAsync(Uri uri, NameValueCollection formData)
     {
-      HttpWebResponse = await uri.PostAsync(CookieContainer, formData, CurrentUri);
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, formData, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public async Task PostAsync(Uri uri, NameValueCollection formData, List<FormFile> formFiles)
+    {
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, formData, formFiles, CurrentUri);
       await ProcessResponse();
     }
 
@@ -72,6 +80,15 @@ namespace Digishui
         }
 
         return PageSourceCache;
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public HttpStatusCode StatusCode
+    {
+      get
+      {
+        return HttpWebResponse.StatusCode;
       }
     }
 

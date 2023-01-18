@@ -7,13 +7,13 @@
   <Description>Kitchen sink of extensions and utility classes for .NET.</Description>
   <Copyright>Copyright © 2011-2021</Copyright>
   <PackageProjectUrl>https://github.com/Digishui/Digishui.NET</PackageProjectUrl>
-  <PackageIconUrl>http://www.digishui.com/img/Digishui-Logo.png</PackageIconUrl>
+  <PackageIcon>digishui-logo.png</PackageIcon>
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.47.19.*</AssemblyVersion>
-  <FileVersion>1.47.19</FileVersion>
-  <Version>1.47.19</Version>
+  <AssemblyVersion>1.48.0.*</AssemblyVersion>
+  <FileVersion>1.48.0</FileVersion>
+  <Version>1.48.0</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>
@@ -22,6 +22,7 @@
 </ItemGroup>
 <ItemGroup>
   <None Remove="Properties\AssemblyInfo.cs.old" />
+  <None Include="images\digishui-logo.png" Pack="true" PackagePath="\"/>
 </ItemGroup>
 <ItemGroup>
   <PackageReference Include="EntityFramework" Version="6.4.4" />
@@ -36,6 +37,7 @@
   <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 </ItemGroup>
 <ItemGroup>
+  <Folder Include="images\" />
   <Folder Include="Properties\" />
 </ItemGroup>
 <ItemGroup>

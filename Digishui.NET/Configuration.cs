@@ -8,7 +8,7 @@ namespace Digishui
   {
     //-------------------------------------------------------------------------------------------------------------------------
     public static string SendGridDefaultFromAddress { get { return ConfigurationManager.AppSettings["Digishui.SendGridDefaultFromAddress"]; } }
-    
+
     //-------------------------------------------------------------------------------------------------------------------------
     public static string SendGridDefaultFromName { get { return ConfigurationManager.AppSettings["Digishui.SendGridDefaultFromName"]; } }
 

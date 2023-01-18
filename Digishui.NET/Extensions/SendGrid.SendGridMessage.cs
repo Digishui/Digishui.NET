@@ -22,7 +22,7 @@ namespace Digishui.Extensions
     {
       get
       {
-        return new SendGridClient(Configuration.SendGridApiKey);
+        return new SendGridClient(SendGrid.ApiKey ?? Configuration.SendGridApiKey);
       }
     }
 
@@ -37,7 +37,7 @@ namespace Digishui.Extensions
           UseDefaultCredentials = false
         };
 
-        webClient.Headers.Add("Authorization", $"Bearer {Configuration.SendGridApiKey}");
+        webClient.Headers.Add("Authorization", $"Bearer {SendGrid.ApiKey ?? Configuration.SendGridApiKey}");
         webClient.Headers.Add("Content-Type", "application/json");
         webClient.Headers.Add("User-Agent", $"digishui/{Assembly.GetAssembly(typeof(Extensions)).GetName().Version}");
         webClient.Headers.Add("Accept", "application/json");
@@ -57,13 +57,20 @@ namespace Digishui.Extensions
     {
       if (sendGridMessage.From == null)
       {
-        sendGridMessage.From = new EmailAddress(Configuration.SendGridDefaultFromAddress, Configuration.SendGridDefaultFromName);
+        sendGridMessage.From = new EmailAddress(SendGrid.DefaultFromAddress ?? Configuration.SendGridDefaultFromAddress, SendGrid.DefaultFromName ?? Configuration.SendGridDefaultFromName);
       }
 
       if (addDefaultBcc == true)
       {
-        sendGridMessage.AddBcc(Configuration.SendGridDefaultBCC);
+        sendGridMessage.AddBcc(SendGrid.DefaultBcc ?? Configuration.SendGridDefaultBCC);
       }
+
+      //Sendgrid does not like non-ascii characters in plain text. This isn't an exhaustive solution to the issue but covers some common errors.
+      //sendGridMessage.PlainTextContent = sendGridMessage.PlainTextContent
+      //  .Replace("‘", "'")
+      //  .Replace("’", "'")
+      //  .Replace("“", "\"")
+      //  .Replace("”", "\"");
 
       //If plain text content is supplied but html content is not supplied, set htmlcontent to same as plain text content
       //wrapped in <pre> tags. This ensures fixed width font rendering across most mail clients, which is preferable since

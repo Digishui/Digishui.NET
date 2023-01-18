@@ -51,6 +51,8 @@ namespace Digishui
 
       response.StatusDescription = "AjaxErrors";
 
+      response.ContentType = "application/json";
+
       if ((Errors?.Count ?? 0) != 0)
       {
         response.Write(JsonConvert.SerializeObject(Errors));

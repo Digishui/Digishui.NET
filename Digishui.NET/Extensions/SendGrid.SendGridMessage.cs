@@ -79,7 +79,7 @@ namespace Digishui.Extensions
       //the same mangling to the html composition when wrapped in <pre> tags.
       if ((sendGridMessage.PlainTextContent != null) && (sendGridMessage.HtmlContent == null) && (renderPlainTextOnlyAlsoAsPreformattedHtml == true))
       {
-        sendGridMessage.HtmlContent = $"<pre style=\"white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: break-word\">{WebUtility.HtmlEncode(sendGridMessage.PlainTextContent)}</pre>";
+        sendGridMessage.HtmlContent = $"<pre style=\"white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; white-space: break-word; font-size: 10pt\">{WebUtility.HtmlEncode(sendGridMessage.PlainTextContent)}</pre>";
 
         sendGridMessage.SetClickTracking(false, false);
         sendGridMessage.SetOpenTracking(false, null);

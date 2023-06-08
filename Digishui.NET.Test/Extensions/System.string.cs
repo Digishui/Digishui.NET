@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Digishui.NET.Test
 {
+  [TestClass]
   public partial class ExtensionTests
   {
     [TestMethod]
@@ -44,6 +45,12 @@ namespace Digishui.NET.Test
     public void System_string_GetNumbers()
     {
       if ("1a2b3c! ".GetNumbers() != "123") { Assert.Fail("System.string.GetNumbers extension should return '123' for value '1a2b3c! '"); }
+    }
+
+    [TestMethod]
+    public void System_string_ReplaceLast()
+    {
+      if ("test\a ".ReplaceLast("\a ", "!") != "test!") { Assert.Fail("System.string.ReplaceLast extension should return 'test!' for value 'test\\a '"); }
     }
 
     [TestMethod]

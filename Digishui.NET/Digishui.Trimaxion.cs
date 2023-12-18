@@ -20,10 +20,23 @@ namespace Digishui
     public MemoryStream ResponseStream { get; private set; } = null;
 
     //-------------------------------------------------------------------------------------------------------------------------
-    private CookieContainer CookieContainer { get; } = new CookieContainer();
+    private CookieContainer CookieContainer { get; }
     private HttpWebResponse HttpWebResponse { get; set; } = null;
     private Encoding ResponseEncoding { get; set; } = null;
-    private string PageSourceCache { get; set; } = String.Empty;
+    private string PageSourceCache { get; set; } = string.Empty;
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public Trimaxion() 
+    {
+      CookieContainer = new CookieContainer();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public Trimaxion(CookieContainer cookieContainer, Uri referer)
+    {
+      CookieContainer = cookieContainer;
+      CurrentUri = referer;
+    }
 
     //-------------------------------------------------------------------------------------------------------------------------
     public async Task GetAsync(Uri uri)

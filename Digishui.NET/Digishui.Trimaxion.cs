@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Mime;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,10 +23,10 @@ namespace Digishui
     public MemoryStream ResponseStream { get; private set; } = null;
 
     //-------------------------------------------------------------------------------------------------------------------------
-    private CookieContainer CookieContainer { get; }
+    private CookieContainer CookieContainer { get; set; }
     private HttpWebResponse HttpWebResponse { get; set; } = null;
     private Encoding ResponseEncoding { get; set; } = null;
-    private string PageSourceCache { get; set; } = string.Empty;
+    private string ResponseContentCache { get; set; } = string.Empty;
 
     //-------------------------------------------------------------------------------------------------------------------------
     public Trimaxion() 
@@ -39,9 +42,34 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public async Task OptionsAsync(Uri uri)
+    {
+      HttpWebResponse = await uri.WebRequestOptionsAsync(CookieContainer, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public async Task OptionsAsync(Uri uri, Dictionary<string, string> requestHeaders)
+    {
+      ProcessRequestHeaders(uri, requestHeaders);
+
+      HttpWebResponse = await uri.WebRequestOptionsAsync(CookieContainer, requestHeaders, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public async Task GetAsync(Uri uri)
     {
       HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public async Task GetAsync(Uri uri, Dictionary<string, string> requestHeaders)
+    {
+      ProcessRequestHeaders(uri, requestHeaders);
+
+      HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, requestHeaders, CurrentUri);
       await ProcessResponse();
     }
 
@@ -53,6 +81,15 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public async Task PostAsync(Uri uri, Dictionary<string, string> requestHeaders, NameValueCollection formData)
+    {
+      ProcessRequestHeaders(uri, requestHeaders);
+
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, requestHeaders, formData, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public async Task PostAsync(Uri uri, NameValueCollection formData, List<FormFile> formFiles)
     {
       HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, formData, formFiles, CurrentUri);
@@ -60,13 +97,52 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public async Task PostAsync(Uri uri, Dictionary<string, string> requestHeaders, NameValueCollection formData, List<FormFile> formFiles)
+    {
+      ProcessRequestHeaders(uri, requestHeaders);
+
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, requestHeaders, formData, formFiles, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    private void ProcessRequestHeaders(Uri uri, Dictionary<string, string> requestHeaders)
+    {
+      if (requestHeaders.ContainsKey("Cookie") == true)
+      {
+        CookieContainer = new CookieContainer();
+
+        string cookieDomain = uri.Host;
+        string cookiePath = "/";
+
+        string cookieHeader = requestHeaders["Cookie"];
+        string[] cookies = cookieHeader.Split(';');
+        foreach (string cookie in cookies)
+        {
+          string[] cookieParts = cookie.Split('=');
+          CookieContainer.Add(new Cookie(cookieParts[0].Trim(), cookieParts[1].Trim(), cookiePath, cookieDomain));
+        }
+
+        requestHeaders.Remove("Cookie");
+      }
+
+      if (requestHeaders.ContainsKey("Referer") == true) 
+      { 
+        CurrentUri = new Uri(requestHeaders["Referer"], UriKind.Absolute);
+
+        requestHeaders.Remove("Referer");
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     private async Task ProcessResponse()
     {
       CurrentUri = HttpWebResponse.ResponseUri;
-      ResponseEncoding = (HttpWebResponse.CharacterSet == "") ? Encoding.UTF8 : Encoding.GetEncoding(HttpWebResponse.CharacterSet);
+
+      ResponseEncoding = (HttpWebResponse.CharacterSet.IsEmpty() == true) ? Encoding.UTF8 : Encoding.GetEncoding(HttpWebResponse.CharacterSet);
 
       if (ResponseStream != null) { ResponseStream.Dispose(); }
-      if (PageSourceCache != String.Empty) { PageSourceCache = String.Empty; }
+      if (ResponseContentCache != String.Empty) { ResponseContentCache = String.Empty; }
 
       ResponseStream = new MemoryStream();
       await HttpWebResponse.GetResponseStream().CopyToAsync(ResponseStream);
@@ -74,30 +150,30 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public string PageSource
+    public string ResponseContent
     {
       get
       {
-        if (PageSourceCache == String.Empty)
+        if (ResponseContentCache == String.Empty)
         {
           if ((ResponseStream?.Length ?? 0) <= 0)
           {
-            PageSourceCache = String.Empty;
+            ResponseContentCache = String.Empty;
           }
           else
           {
             StreamReader streamReader = new StreamReader(ResponseStream, ResponseEncoding);
-            PageSourceCache = streamReader.ReadToEnd();
+            ResponseContentCache = streamReader.ReadToEnd();
             ResponseStream.Position = 0;
           }
         }
 
-        return PageSourceCache;
+        return ResponseContentCache;
       }
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    public HttpStatusCode StatusCode
+    public HttpStatusCode ResponseStatusCode
     {
       get
       {
@@ -106,11 +182,55 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public string ResponseContentType
+    {
+      get
+      {
+        return HttpWebResponse.ContentType;
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public WebHeaderCollection ResponseHeaders
+    {
+      get
+      {
+        return HttpWebResponse.Headers;
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public Dictionary<string, object> ResponseHeadersDictionary
+    {
+      get
+      {
+        Dictionary<string, object> headersDictionary = new Dictionary<string, object>();
+
+        foreach(var key in ResponseHeaders.AllKeys)
+        {
+          headersDictionary.Add(key, ResponseHeaders[key]);
+        }
+
+        return headersDictionary;
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public ContentDisposition ResponseContentDisposition
+    {
+      get
+      {
+        if (HttpWebResponse.Headers["Content-Disposition"] != null) { return new ContentDisposition(HttpWebResponse.Headers["Content-Disposition"]); }
+        else { return null; }
+      }
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public HtmlNode GetFormNodeById(string formId = null)
     {
       HtmlNode.ElementsFlags.Remove("form");
       HtmlDocument htmlDocument = new HtmlDocument();
-      htmlDocument.LoadHtml(PageSource);
+      htmlDocument.LoadHtml(ResponseContent);
 
       HtmlNode formNode = null;
 
@@ -136,7 +256,7 @@ namespace Digishui
     public string GetHrefStartingWith(string hrefStart)
     {
       HtmlDocument htmlDocument = new HtmlDocument();
-      htmlDocument.LoadHtml(PageSource);
+      htmlDocument.LoadHtml(ResponseContent);
 
       foreach (HtmlNode htmlNode in htmlDocument.DocumentNode.SelectNodes("//a[@href]"))
       {

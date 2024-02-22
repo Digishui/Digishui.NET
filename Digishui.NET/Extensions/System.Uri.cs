@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -18,6 +19,7 @@ namespace Digishui.Extensions
     //-------------------------------------------------------------------------------------------------------------------------
     private static HttpWebRequest CreateRequest(Uri uri,
                                                 CookieContainer cookieContainer,
+                                                Dictionary<string, string> requestHeaders,
                                                 Uri refererUri = null,
                                                 bool ignoreCertificateValidationErrors = false)
     {
@@ -25,15 +27,34 @@ namespace Digishui.Extensions
 
       httpWebRequest.CookieContainer = cookieContainer;
 
-      if (ignoreCertificateValidationErrors == true) { httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => { return true; }; }
+      if (ignoreCertificateValidationErrors == true) 
+      { 
+        httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => { return true; }; 
+      }
 
       httpWebRequest.AllowAutoRedirect = true;
 
       httpWebRequest.Referer = refererUri?.ToString() ?? "";
 
-      httpWebRequest.Headers.Add("DNT", "1");
+      if (requestHeaders.ContainsKey("Dnt") == false)
+      { 
+        httpWebRequest.Headers.Add("Dnt", "1"); 
+      }
 
-      httpWebRequest.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36";
+      if (requestHeaders.ContainsKey("User-Agent") == false)
+      {
+        httpWebRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.3";
+      }
+      else
+      {
+        httpWebRequest.UserAgent = requestHeaders["User-Agent"];
+        requestHeaders.Remove("User-Agent");
+      }
+
+      foreach(KeyValuePair<string, string> header in requestHeaders)
+      {
+        httpWebRequest.Headers[header.Key] = header.Value;
+      }
 
       httpWebRequest.ReadWriteTimeout = 60000;
       httpWebRequest.Timeout = 60000;
@@ -42,11 +63,51 @@ namespace Digishui.Extensions
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> WebRequestOptionsAsync(this Uri uri,
+                                                                     CookieContainer cookieContainer,
+                                                                     Uri refererUri = null)
+    {
+      return await WebRequestOptionsAsync
+      (
+        uri,
+        cookieContainer,
+        new Dictionary<string, string>(),
+        refererUri
+      );
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> WebRequestOptionsAsync(this Uri uri,
+                                                                     CookieContainer cookieContainer,
+                                                                     Dictionary<string, string> requestHeaders,
+                                                                     Uri refererUri = null)
+    {
+      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, requestHeaders, refererUri);
+      HttpWebResponse httpWebResponse = await httpWebRequest.OptionsAsync();
+      return httpWebResponse;
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public static async Task<HttpWebResponse> WebRequestGetAsync(this Uri uri,
                                                                  CookieContainer cookieContainer,
                                                                  Uri refererUri = null)
     {
-      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, refererUri);
+      return await WebRequestGetAsync
+      (
+        uri,
+        cookieContainer,
+        new Dictionary<string, string>(),
+        refererUri
+      );
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> WebRequestGetAsync(this Uri uri,
+                                                                 CookieContainer cookieContainer,
+                                                                 Dictionary<string, string> requestHeaders,
+                                                                 Uri refererUri = null)
+    {
+      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, requestHeaders, refererUri);
       HttpWebResponse httpWebResponse = await httpWebRequest.GetAsync();
       return httpWebResponse;
     }
@@ -57,9 +118,44 @@ namespace Digishui.Extensions
                                                                   NameValueCollection formData,
                                                                   Uri refererUri = null)
     {
-      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, refererUri);
+      return await WebRequestPostAsync
+      (
+        uri,
+        cookieContainer,
+        new Dictionary<string, string>(),
+        formData,
+        refererUri
+      );
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> WebRequestPostAsync(this Uri uri,
+                                                                  CookieContainer cookieContainer,
+                                                                  Dictionary<string, string> requestHeaders,
+                                                                  NameValueCollection formData,
+                                                                  Uri refererUri = null)
+    {
+      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, requestHeaders, refererUri);
       HttpWebResponse httpWebResponse = await httpWebRequest.PostAsync(formData);
       return httpWebResponse;
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> WebRequestPostAsync(this Uri uri,
+                                                                  CookieContainer cookieContainer,
+                                                                  NameValueCollection formData,
+                                                                  List<FormFile> formFiles,
+                                                                  Uri refererUri = null)
+    {
+      return await WebRequestPostAsync
+      (
+        uri,
+        cookieContainer,
+        new Dictionary<string, string>(),
+        formData,
+        formFiles,
+        refererUri
+      );
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
@@ -68,13 +164,14 @@ namespace Digishui.Extensions
     /// </remarks>
     public static async Task<HttpWebResponse> WebRequestPostAsync(this Uri uri,
                                                                   CookieContainer cookieContainer,
+                                                                  Dictionary<string, string> requestHeaders,
                                                                   NameValueCollection formData,
                                                                   List<FormFile> formFiles,
                                                                   Uri refererUri = null)
     {
       string boundary = "----------------------------" + DateTime.Now.Ticks.ToString("x");
 
-      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, refererUri);
+      HttpWebRequest httpWebRequest = CreateRequest(uri, cookieContainer, requestHeaders, refererUri);
       httpWebRequest.ContentType = $"multipart/form-data; boundary={boundary}";
       httpWebRequest.Method = "POST";
       httpWebRequest.KeepAlive = true;
@@ -114,19 +211,6 @@ namespace Digishui.Extensions
 
       byte[] endBoundaryBytes = System.Text.Encoding.ASCII.GetBytes($"\r\n--{boundary}--");
       await requestMemoryStream.WriteAsync(endBoundaryBytes, 0, endBoundaryBytes.Length);
-
-      //await requestMemoryStream.CopyToAsync(await httpWebRequest.GetRequestStreamAsync(), true);
-
-      //httpWebRequest.ContentLength = requestMemoryStream.Length;
-
-      //using (Stream requestStream = httpWebRequest.GetRequestStream())
-      //{
-      //  requestMemoryStream.Position = 0;
-      //  byte[] tempBuffer = new byte[requestMemoryStream.Length];
-      //  requestMemoryStream.Read(tempBuffer, 0, tempBuffer.Length);
-      //  requestMemoryStream.Close();
-      //  requestStream.Write(tempBuffer, 0, tempBuffer.Length);
-      //}
 
       return (HttpWebResponse)(await httpWebRequest.GetResponseAsync());
     }

@@ -14,11 +14,19 @@ namespace Digishui.Extensions
   public static partial class Extensions
   {
     //-------------------------------------------------------------------------------------------------------------------------
+    public static async Task<HttpWebResponse> OptionsAsync(this HttpWebRequest httpWebRequest)
+    {
+      httpWebRequest.Method = "OPTIONS";
+
+      return await httpWebRequest.GetResponseAsyncNoException();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public static async Task<HttpWebResponse> GetAsync(this HttpWebRequest httpWebRequest)
     {
       httpWebRequest.Method = "GET";
 
-      return (HttpWebResponse)(await httpWebRequest.GetResponseAsync());
+      return await httpWebRequest.GetResponseAsyncNoException();
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
@@ -36,7 +44,27 @@ namespace Digishui.Extensions
         await requestStream.WriteAsync(postBytes, 0, postBytes.Length);
       }
 
-      return (HttpWebResponse)(await httpWebRequest.GetResponseAsync());
+      return (HttpWebResponse)(await httpWebRequest.GetResponseAsyncNoException());
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    /// <see cref="https://stackoverflow.com/questions/10081726/why-does-httpwebrequest-throw-an-exception-instead-returning-httpstatuscode-notf"/>
+    /// <param name="httpWebRequest"></param>
+    /// <returns></returns>
+    public static async Task<HttpWebResponse> GetResponseAsyncNoException(this HttpWebRequest httpWebRequest)
+    {
+      try
+      {
+        return (HttpWebResponse)(await httpWebRequest.GetResponseAsync());
+      }
+      catch (WebException webException)
+      {
+        HttpWebResponse webResponse = webException.Response as HttpWebResponse;
+
+        if (webResponse == null) { throw; }
+
+        return webResponse;
+      }
     }
   }
 }

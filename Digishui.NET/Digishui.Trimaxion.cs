@@ -58,6 +58,15 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public async Task OptionsAsync(Uri uri, Dictionary<string, string> requestHeaders, CookieContainer cookieContainer)
+    {
+      ProcessRequestHeaders(uri, requestHeaders, cookieContainer);
+
+      HttpWebResponse = await uri.WebRequestOptionsAsync(CookieContainer, requestHeaders, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public async Task GetAsync(Uri uri)
     {
       HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, CurrentUri);
@@ -68,6 +77,15 @@ namespace Digishui
     public async Task GetAsync(Uri uri, Dictionary<string, string> requestHeaders)
     {
       ProcessRequestHeaders(uri, requestHeaders);
+
+      HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, requestHeaders, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    public async Task GetAsync(Uri uri, Dictionary<string, string> requestHeaders, CookieContainer cookieContainer)
+    {
+      ProcessRequestHeaders(uri, requestHeaders, cookieContainer);
 
       HttpWebResponse = await uri.WebRequestGetAsync(CookieContainer, requestHeaders, CurrentUri);
       await ProcessResponse();
@@ -90,6 +108,15 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public async Task PostAsync(Uri uri, Dictionary<string, string> requestHeaders, CookieContainer cookieContainer, NameValueCollection formData)
+    {
+      ProcessRequestHeaders(uri, requestHeaders, cookieContainer);
+
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, requestHeaders, formData, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
     public async Task PostAsync(Uri uri, NameValueCollection formData, List<FormFile> formFiles)
     {
       HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, formData, formFiles, CurrentUri);
@@ -106,9 +133,27 @@ namespace Digishui
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
-    private void ProcessRequestHeaders(Uri uri, Dictionary<string, string> requestHeaders)
+    public async Task PostAsync(Uri uri, Dictionary<string, string> requestHeaders, CookieContainer cookieContainer, NameValueCollection formData, List<FormFile> formFiles)
     {
-      if (requestHeaders.ContainsKey("Cookie") == true)
+      ProcessRequestHeaders(uri, requestHeaders, cookieContainer);
+
+      HttpWebResponse = await uri.WebRequestPostAsync(CookieContainer, requestHeaders, formData, formFiles, CurrentUri);
+      await ProcessResponse();
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    private void ProcessRequestHeaders(Uri uri, Dictionary<string, string> requestHeaders, CookieContainer cookieContainer = null)
+    {
+      if (cookieContainer != null) 
+      {
+        CookieContainer = cookieContainer;
+
+        if (requestHeaders.ContainsKey("Cookie") == true) 
+        {
+          requestHeaders.Remove("Cookie"); 
+        }
+      }
+      else if (requestHeaders.ContainsKey("Cookie") == true)
       {
         CookieContainer = new CookieContainer();
 
@@ -131,6 +176,11 @@ namespace Digishui
         CurrentUri = new Uri(requestHeaders["Referer"], UriKind.Absolute);
 
         requestHeaders.Remove("Referer");
+      }
+
+      if (requestHeaders.ContainsKey("Content-Length") == true)
+      {
+        requestHeaders.Remove("Content-Length");
       }
     }
 
@@ -208,7 +258,39 @@ namespace Digishui
 
         foreach(var key in ResponseHeaders.AllKeys)
         {
-          headersDictionary.Add(key, ResponseHeaders[key]);
+          object value = ResponseHeaders[key];
+
+          if (key == "Set-Cookie")
+          {
+            string cookieData = value.ToString();
+
+            ICollection<string> cookies = new List<string>();
+
+            int cookieStartIndex = 0;
+
+            while(true)
+            {
+              int cookieEndIndex = cookieData.IndexOf(", ", cookieData.IndexOf("expires=", cookieStartIndex, StringComparison.InvariantCultureIgnoreCase) + 12);
+
+              if (cookieEndIndex < 0)
+              {
+                cookies.Add(cookieData.Substring(cookieStartIndex));
+                break;
+              }
+              else
+              {
+                cookies.Add(cookieData.Substring(cookieStartIndex, cookieEndIndex - cookieStartIndex));
+                cookieStartIndex = cookieEndIndex + 2;
+              }
+            }
+
+            if (cookies.Count > 1)
+            {
+              value = cookies;
+            }
+          }
+
+          headersDictionary.Add(key, value);
         }
 
         return headersDictionary;

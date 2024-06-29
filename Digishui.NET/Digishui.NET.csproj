@@ -11,9 +11,9 @@
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.48.32.*</AssemblyVersion>
-  <FileVersion>1.48.32</FileVersion>
-  <Version>1.48.32</Version>
+  <AssemblyVersion>1.48.33.*</AssemblyVersion>
+  <FileVersion>1.48.33</FileVersion>
+  <Version>1.48.33</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>
@@ -25,12 +25,12 @@
   <None Include="images\digishui-logo.png" Pack="true" PackagePath="\" />
 </ItemGroup>
 <ItemGroup>
-  <PackageReference Include="EntityFramework" Version="6.4.4" />
-  <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
-  <PackageReference Include="libphonenumber-csharp" Version="8.13.31" />
+  <PackageReference Include="EntityFramework" Version="6.5.1" />
+  <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+  <PackageReference Include="libphonenumber-csharp" Version="8.13.39" />
   <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
   <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  <PackageReference Include="Sendgrid" Version="9.29.2" />
+  <PackageReference Include="Sendgrid" Version="9.29.3" />
   <PackageReference Include="SSH.NET" Version="2024.0.0" />
   <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
 </ItemGroup>

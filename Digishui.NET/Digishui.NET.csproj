@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 <PropertyGroup>
   <Deterministic>false</Deterministic>
-  <TargetFramework>net48</TargetFramework>
+  <TargetFramework>net481</TargetFramework>
   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   <Authors>Digishui LLC</Authors>
   <Description>Kitchen sink of extensions and utility classes for .NET.</Description>
-  <Copyright>Copyright © 2011-2023</Copyright>
+  <Copyright>Copyright © 2011-2025</Copyright>
   <PackageProjectUrl>https://github.com/Digishui/Digishui.NET</PackageProjectUrl>
   <PackageIcon>digishui-logo.png</PackageIcon>
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
-  <PackageOutputPath>C:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.48.33.*</AssemblyVersion>
-  <FileVersion>1.48.33</FileVersion>
-  <Version>1.48.33</Version>
+  <PackageOutputPath>E:\Nuget</PackageOutputPath>
+  <AssemblyVersion>1.48.41.*</AssemblyVersion>
+  <FileVersion>1.48.41</FileVersion>
+  <Version>1.48.41</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>
@@ -26,19 +26,30 @@
 </ItemGroup>
 <ItemGroup>
   <PackageReference Include="EntityFramework" Version="6.5.1" />
-  <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
-  <PackageReference Include="libphonenumber-csharp" Version="8.13.39" />
+  <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
+  <PackageReference Include="libphonenumber-csharp" Version="9.0.4" />
   <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
   <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   <PackageReference Include="Sendgrid" Version="9.29.3" />
-  <PackageReference Include="SSH.NET" Version="2024.0.0" />
-  <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
 </ItemGroup>
 <ItemGroup>
   <Folder Include="images\" />
-  <Folder Include="Properties\" />
 </ItemGroup>
 <ItemGroup>
   <Reference Include="System.Web" />
+</ItemGroup>
+<ItemGroup>
+  <Compile Update="Properties\Settings.Designer.cs">
+    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    <AutoGen>True</AutoGen>
+    <DependentUpon>Settings.settings</DependentUpon>
+  </Compile>
+</ItemGroup>
+<ItemGroup>
+  <None Update="Properties\Settings.settings">
+    <Generator>SettingsSingleFileGenerator</Generator>
+    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+  </None>
 </ItemGroup>
 </Project>

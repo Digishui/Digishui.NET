@@ -59,9 +59,7 @@ namespace Digishui.Extensions
       }
       catch (WebException webException)
       {
-        HttpWebResponse webResponse = webException.Response as HttpWebResponse;
-
-        if (webResponse == null) { throw; }
+        if (!(webException.Response is HttpWebResponse webResponse)) { throw; }
 
         return webResponse;
       }

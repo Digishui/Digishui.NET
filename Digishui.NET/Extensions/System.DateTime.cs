@@ -136,13 +136,15 @@ namespace Digishui.Extensions
     //-------------------------------------------------------------------------------------------------------------------------
     public static bool IsHoliday(this DateTime dt)
     {
-      if (dt.DayOfYear == 1) return true; //New Year's Day
-      else if (dt.IsEasterSunday() == true) return true; //Easter Sunday
-      else if (dt.IsMemorialDay() == true) return true; //Memorial Day
-      else if ((dt.Month == 7) && (dt.Day == 4)) return true; //Independence Day
-      else if (dt.IsLaborDay() == true) return true; //Labor Day
-      else if (dt.IsThanksgiving() == true) return true; //Thanksgiving
-      else if ((dt.Month == 12) && (dt.Day == 25)) return true; //Christmas
+      if (dt.DayOfYear == 1) { return true; } //New Year's Day
+      else if (dt.IsEasterSunday() == true) { return true; } //Easter Sunday
+      else if (dt.IsMemorialDay() == true) { return true; } //Memorial Day
+      else if ((dt.Month == 7) && (dt.Day == 4)) { return true; } //Independence Day
+      else if (dt.IsLaborDay() == true) { return true; } //Labor Day
+      else if (dt.IsThanksgiving() == true) { return true; } //Thanksgiving
+      else if (dt.IsBlackFriday() == true) { return true; } //Black Friday
+      else if ((dt.Month == 12) && (dt.Day == 24)) { return true; } //Christmas Eve
+      else if ((dt.Month == 12) && (dt.Day == 25)) { return true; } //Christmas
       else return false;
     }
 
@@ -152,8 +154,6 @@ namespace Digishui.Extensions
     /// </remarks>
     private static bool IsEasterSunday(this DateTime dt)
     {
-      int day = 0;
-      int month = 0;
       int year = dt.Year;
 
       int g = year % 19;
@@ -161,8 +161,8 @@ namespace Digishui.Extensions
       int h = (c - (int)(c / 4) - (int)((8 * c + 13) / 25) + 19 * g + 15) % 30;
       int i = h - (int)(h / 28) * (1 - (int)(h / 28) * (int)(29 / (h + 1)) * (int)((21 - g) / 11));
 
-      day = i - ((year + (int)(year / 4) + i + 2 - c + (int)(c / 4)) % 7) + 28;
-      month = 3;
+      int day = i - ((year + (int)(year / 4) + i + 2 - c + (int)(c / 4)) % 7) + 28;
+      int month = 3;
 
       if (day > 31)
       {
@@ -176,42 +176,59 @@ namespace Digishui.Extensions
     //-------------------------------------------------------------------------------------------------------------------------
     private static bool IsMemorialDay(this DateTime dt)
     {
-      DateTime MemorialDay = new DateTime(dt.Year, 5, 31);
+      DateTime memorialDay = new DateTime(dt.Year, 5, 31);
 
-      while (MemorialDay.DayOfWeek != DayOfWeek.Monday)
+      while (memorialDay.DayOfWeek != DayOfWeek.Monday)
       {
-        MemorialDay = MemorialDay.AddDays(-1);
+        memorialDay = memorialDay.AddDays(-1);
       }
 
-      return (dt.Date == MemorialDay);
+      return (dt.Date == memorialDay);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
     private static bool IsLaborDay(this DateTime dt)
     {
-      DateTime LaborDay = new DateTime(dt.Year, 9, 1);
+      DateTime laborDay = new DateTime(dt.Year, 9, 1);
 
-      while (LaborDay.DayOfWeek != DayOfWeek.Monday)
+      while (laborDay.DayOfWeek != DayOfWeek.Monday)
       {
-        LaborDay = LaborDay.AddDays(1);
+        laborDay = laborDay.AddDays(1);
       }
 
-      return (dt.Date == LaborDay);
+      return (dt.Date == laborDay);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
     private static bool IsThanksgiving(this DateTime dt)
     {
-      DateTime Thanksgiving = new DateTime(dt.Year, 11, 1);
+      DateTime thanksgiving = new DateTime(dt.Year, 11, 1);
 
-      while (Thanksgiving.DayOfWeek != DayOfWeek.Thursday)
+      while (thanksgiving.DayOfWeek != DayOfWeek.Thursday)
       {
-        Thanksgiving = Thanksgiving.AddDays(1);
+        thanksgiving = thanksgiving.AddDays(1);
       }
 
-      Thanksgiving = Thanksgiving.AddDays(21);
+      thanksgiving = thanksgiving.AddDays(21);
 
-      return (dt.Date == Thanksgiving);
+      return (dt.Date == thanksgiving);
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    private static bool IsBlackFriday(this DateTime dt)
+    {
+      DateTime thanksgiving = new DateTime(dt.Year, 11, 1);
+
+      while (thanksgiving.DayOfWeek != DayOfWeek.Thursday)
+      {
+        thanksgiving = thanksgiving.AddDays(1);
+      }
+
+      thanksgiving = thanksgiving.AddDays(21);
+
+      DateTime blackFriday = thanksgiving.AddDays(1);
+
+      return (dt.Date == blackFriday);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------

@@ -22,7 +22,7 @@ namespace Digishui.Extensions
 
       var results = source.Take(2).ToArray();
 
-      return results.Length == 1 ? results[0] : default(TSource);
+      return results.Length == 1 ? results[0] : default;
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ namespace Digishui.Extensions
 
       var results = source.Where(predicate).Take(2).ToArray();
 
-      return results.Length == 1 ? results[0] : default(TSource);
+      return results.Length == 1 ? results[0] : default;
     }
   }
 }

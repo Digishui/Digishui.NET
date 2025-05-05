@@ -7,7 +7,7 @@ namespace Digishui
   public class PstnUtil
   {
     //-------------------------------------------------------------------------------------------------------------------------
-    private static PhoneNumbers.PhoneNumberUtil PhoneNumberUtil { get; } = PhoneNumbers.PhoneNumberUtil.GetInstance();
+    private static PhoneNumberUtil PhoneNumberUtil { get; } = PhoneNumberUtil.GetInstance();
 
     //-------------------------------------------------------------------------------------------------------------------------
     /// <summary>
@@ -19,13 +19,13 @@ namespace Digishui
     /// <returns>Phone number formatted for display purposes, or null if the phone number is invalid.</returns>
     public static string DisplayFormat(string pstn)
     {
-      if (pstn == null) return null;
+      if (pstn == null) { return null; }
 
       pstn = pstn.Trim();
 
-      if (PhoneNumberUtil.IsPossibleNumber(pstn, "US") == false) return null;
+      if (PhoneNumberUtil.IsPossibleNumber(pstn, "US") == false) { return null; }
 
-      PhoneNumbers.PhoneNumber phoneNumber = PhoneNumberUtil.Parse(pstn, "US");
+      PhoneNumber phoneNumber = PhoneNumberUtil.Parse(pstn, "US");
 
       if (phoneNumber.CountryCode == 1)
       {
@@ -45,11 +45,11 @@ namespace Digishui
     /// <returns>Phone number formatted for storage purposes, or null if the phone number is invalid.</returns>
     public static string StorageFormat(string pstn)
     {
-      if (pstn == null) return null;
+      if (pstn == null) { return null; }
 
       pstn = pstn.Trim();
 
-      if (PhoneNumberUtil.IsPossibleNumber(pstn, "US") == false) return null;
+      if (PhoneNumberUtil.IsPossibleNumber(pstn, "US") == false) { return null; }
 
       return PhoneNumberUtil.Format(PhoneNumberUtil.Parse(pstn, "US"), PhoneNumberFormat.E164);
     }
@@ -64,7 +64,7 @@ namespace Digishui
     {
       pstn = StorageFormat(pstn);
 
-      if (pstn == null) return null;
+      if (pstn == null) { return null; }
 
       PhoneNumber phoneNumber = PhoneNumberUtil.Parse(pstn, "");
       return phoneNumber.CountryCode.ToString();
@@ -80,7 +80,7 @@ namespace Digishui
     {
       pstn = StorageFormat(pstn);
 
-      if (pstn == null) return null;
+      if (pstn == null) { return null; }
 
       return pstn.Replace($"+{GetCountryCode(pstn)}", "");
     }

@@ -191,7 +191,7 @@ namespace Digishui
 
       ResponseEncoding = (HttpWebResponse.CharacterSet.IsEmpty() == true) ? Encoding.UTF8 : Encoding.GetEncoding(HttpWebResponse.CharacterSet);
 
-      if (ResponseStream != null) { ResponseStream.Dispose(); }
+      ResponseStream?.Dispose();
       if (ResponseContentCache != String.Empty) { ResponseContentCache = String.Empty; }
 
       ResponseStream = new MemoryStream();
@@ -263,25 +263,22 @@ namespace Digishui
           if (key == "Set-Cookie")
           {
             string cookieData = value.ToString();
+            cookieData = cookieData.Replace("=Sun, ", "=Sun,\a");
+            cookieData = cookieData.Replace("=Mon, ", "=Mon,\a");
+            cookieData = cookieData.Replace("=Tue, ", "=Tue,\a");
+            cookieData = cookieData.Replace("=Wed, ", "=Wed,\a");
+            cookieData = cookieData.Replace("=Thu, ", "=Thu,\a");
+            cookieData = cookieData.Replace("=Fri, ", "=Fri,\a");
+            cookieData = cookieData.Replace("=Sat, ", "=Sat,\a");
+            cookieData = cookieData.Replace(", ", "\t");
+
+            string[] cookieArray = cookieData.Split('\t');
 
             ICollection<string> cookies = new List<string>();
 
-            int cookieStartIndex = 0;
-
-            while(true)
+            foreach (string cookie in cookieArray)
             {
-              int cookieEndIndex = cookieData.IndexOf(", ", cookieData.IndexOf("expires=", cookieStartIndex, StringComparison.InvariantCultureIgnoreCase) + 12);
-
-              if (cookieEndIndex < 0)
-              {
-                cookies.Add(cookieData.Substring(cookieStartIndex));
-                break;
-              }
-              else
-              {
-                cookies.Add(cookieData.Substring(cookieStartIndex, cookieEndIndex - cookieStartIndex));
-                cookieStartIndex = cookieEndIndex + 2;
-              }
+              cookies.Add(cookie.Replace("\a", " "));
             }
 
             if (cookies.Count > 1)

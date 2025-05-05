@@ -22,7 +22,7 @@ namespace Digishui.Extensions
 
       var results = await source.Take(2).ToArrayAsync();
 
-      return results.Length == 1 ? results[0] : default(TSource);
+      return results.Length == 1 ? results[0] : default;
     }
 
     public static async Task<TSource> ExclusiveOrDefaultAsync<TSource>(this IQueryable<TSource> source, Func<TSource, bool> predicate)
@@ -34,7 +34,7 @@ namespace Digishui.Extensions
 
       var results = await source.Where(predicate).AsQueryable().Take(2).ToArrayAsync();
 
-      return results.Length == 1 ? results[0] : default(TSource);
+      return results.Length == 1 ? results[0] : default;
     }
   }
 }

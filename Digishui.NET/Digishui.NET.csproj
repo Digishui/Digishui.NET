@@ -4,16 +4,16 @@
   <TargetFramework>net481</TargetFramework>
   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   <Authors>Digishui LLC</Authors>
-  <Description>Kitchen sink of extensions and utility classes for .NET.</Description>
+  <Description>Kitchen sink of extensions and utility classes for .NET</Description>
   <Copyright>Copyright © 2011-2025</Copyright>
   <PackageProjectUrl>https://github.com/Digishui/Digishui.NET</PackageProjectUrl>
   <PackageIcon>digishui-logo.png</PackageIcon>
   <PackageTags>Digishui</PackageTags>
   <PackageReleaseNotes></PackageReleaseNotes>
   <PackageOutputPath>E:\Nuget</PackageOutputPath>
-  <AssemblyVersion>1.48.41.*</AssemblyVersion>
-  <FileVersion>1.48.41</FileVersion>
-  <Version>1.48.41</Version>
+  <AssemblyVersion>1.49.1.*</AssemblyVersion>
+  <FileVersion>1.49.1</FileVersion>
+  <Version>1.49.1</Version>
   <RepositoryUrl>https://github.com/Digishui/Digishui.NET</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
 </PropertyGroup>
@@ -25,7 +25,6 @@
   <None Include="images\digishui-logo.png" Pack="true" PackagePath="\" />
 </ItemGroup>
 <ItemGroup>
-  <PackageReference Include="EntityFramework" Version="6.5.1" />
   <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
   <PackageReference Include="libphonenumber-csharp" Version="9.0.4" />
   <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
